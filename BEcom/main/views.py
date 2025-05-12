@@ -6,3 +6,5 @@ from django.http import HttpResponse
 
 def index(response):
     return HttpResponse("buy sell buy sell")
+def about(response):
+    return HttpResponse("This is the about page")   
