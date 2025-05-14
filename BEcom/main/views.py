@@ -9,8 +9,10 @@ from django.http import HttpResponse
 
 def index(response):
     return HttpResponse("buy sell buy sell")
-def about(response):
-    return HttpResponse("This is the about page")   
+def about(request):
+    return render(request, 'about.html') 
+def contact(request):
+    return render(request, 'contact.html') 
 def register(request):
     if request.method == 'GET':
         form = RegistrationForm()
