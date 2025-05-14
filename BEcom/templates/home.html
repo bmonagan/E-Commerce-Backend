@@ -13,6 +13,22 @@
 </form>
 {% else %}
 <p>You are not logged in</p>
-<a href="{% url 'login' %}">Log In</a>
+<p><a href="{% url 'password_reset' %}">Password Reset</a></p>
+<p><a href="{% url 'login' %}">Log In</a></p>
+<p><a href="{% url 'register' %}">Register</a></p>
+{% endif %}
+{% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% if form.errors %}
+  <ul>
+    {% for field, errors in form.errors.items %}
+      <li>{{ field }}: {{ errors|join:", " }}</li>
+    {% endfor %}
+  </ul>
 {% endif %}
 {% endblock %}
