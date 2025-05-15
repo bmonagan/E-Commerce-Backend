@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'accounts',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Redirect to home URL after login/logout (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
+
+# Media files settings
+# Static files (CSS, JavaScript, images)
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+# Media files (uploaded user files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"

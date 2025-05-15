@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from .forms import LoginForm, RegistrationForm
 from django.http import HttpResponse
+
+from .forms import LoginForm, RegistrationForm
+
 
 
 # Create your views here.
@@ -13,6 +15,8 @@ def about(request):
     return render(request, 'about.html') 
 def contact(request):
     return render(request, 'contact.html') 
+
+# Registration
 def register(request):
     if request.method == 'GET':
         form = RegistrationForm()
@@ -29,3 +33,9 @@ def register(request):
             return redirect('posts')
         else:
             return render(request, 'registration/register.html', {'form': form})
+
+
+
+# Shopping Cart and Products
+def shop(request):
+    return render(request, 'shop.html')
