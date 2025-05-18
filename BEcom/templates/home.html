@@ -1,54 +1,255 @@
 {% extends "base.html" %}
+{% load static %} {# Ensure this is at the top #}
 
 {% block title %}Home{% endblock %}
 
 {% block head %}
-{{ block.super }} {# Includes head content from base.html #}
+{{ block.super }}
 <style>
+  :root {
+    --primary-blue: #007bff;
+    --primary-blue-darker: #0056b3;
+    --primary-blue-light-bg: #f0f8ff; /* AliceBlue - very light */
+    --text-dark: #212529;
+    --text-light: #ffffff;
+    --bg-light-grey: #f8f9fa;
+    --bg-white: #ffffff;
+    --border-color: #dee2e6;
+    /* Message/Error colors remain for clear UX */
+    --success-text: #155724;
+    --success-bg: #d4edda;
+    --success-border: #c3e6cb;
+    --error-text: #721c24;
+    --error-bg: #f8d7da;
+    --error-border: #f5c6cb;
+  }
+
+  /* --- Basic Layout & Sticky Footer --- */
   html {
     height: 100%;
     margin: 0;
     padding: 0;
+    box-sizing: border-box; /* Standard good practice */
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.6;
-    margin: 0; /* Reset default margin */
-    padding: 0; /* Reset default padding */
-    background-color: #f8f9fa; /* Light grey background */
-    color: #212529; /* Dark text color */
-    display: flex; /* Use flexbox for body */
-    flex-direction: column; /* Stack children vertically */
-    min-height: 100vh; /* Ensure body takes at least full viewport height */
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light-grey);
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
   .container {
     width: 90%;
-    max-width: 960px; /* Max width for larger screens */
-    margin: 20px auto; /* Top/bottom margins + auto for horizontal centering */
+    max-width: 960px;
+    margin: 20px auto;
     padding: 20px;
-    background-color: #ffffff; /* White content background */
+    background-color: var(--bg-white);
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Allows container to grow and fill available space in body */
+    flex-grow: 1;
   }
+  main.page-content {
+    flex-grow: 1;
+    width: 100%;
+  }
+  /* --- End Basic Layout --- */
+
+  /* --- Header Styling --- */
   header.page-header {
     width: 100%;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap; /* Allow wrapping on small screens if needed */
   }
-  main.page-content {
-    flex-grow: 1; /* Allows main content to expand and push footer down within container */
-    width: 100%;
+  .logo-container img {
+    max-height: 50px;
+    width: auto;
+    display: block;
   }
-  footer.page-footer {
-    width: 100%; /* Ensure footer spans the width of its parent (.container) */
-    background-color: #343a40; /* Dark background for footer */
-    color: #ffffff;
-    padding: 20px 0; /* Padding inside the footer */
-    margin-top: 30px; /* Space above the footer, ensuring it's distinct */
+  nav.main-nav ul { /* Main navigation (e.g., View Cart) */
+    list-style: none;
+    padding: 0;
+    margin: 0 20px 0 0; /* Margin to separate from user actions if on same line */
+    display: flex;
+  }
+  nav.main-nav ul li {
+    margin-left: 15px;
+  }
+  nav.main-nav ul li a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  nav.main-nav ul li a:hover,
+  nav.main-nav ul li a.active {
+    background-color: var(--primary-blue-light-bg);
+    color: var(--primary-blue-darker);
+  }
+
+  .header-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between items */
+    margin-left: auto; /* Push to the right */
+  }
+  .header-user-actions p {
+    margin: 0;
+    color: var(--text-dark);
+  }
+  .header-user-actions a,
+  .header-user-actions button {
+    text-decoration: none;
+    color: var(--primary-blue);
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid transparent; /* For consistent height */
+    font-size: 0.9rem;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .header-user-actions button {
+    background-color: var(--primary-blue);
+    color: var(--text-light);
+    border-color: var(--primary-blue);
+    cursor: pointer;
+  }
+  .header-user-actions button:hover {
+    background-color: var(--primary-blue-darker);
+    border-color: var(--primary-blue-darker);
+  }
+  .header-user-actions a:hover {
+    color: var(--primary-blue-darker);
+    background-color: var(--primary-blue-light-bg);
+  }
+  .header-user-actions .user-greeting {
+    margin-right: 5px; /* Space before name */
+    font-size: 0.9rem;
+  }
+  .header-user-actions .user-greeting strong {
+    color: var(--primary-blue-darker);
+  }
+  /* --- End Header Styling --- */
+
+  /* --- Shop Call to Action (CTA) in Main Content --- */
+  .shop-cta {
     text-align: center;
-    border-radius: 5px; /* Match other container elements */
+    margin: 30px 0;
+    padding: 20px;
+    background-color: var(--primary-blue-light-bg);
+    border-radius: 8px;
+  }
+  .shop-cta a {
+    text-decoration: none;
+    color: var(--primary-blue-darker);
+    display: inline-block; /* To group image and text */
+    transition: transform 0.2s ease;
+  }
+  .shop-cta a:hover {
+    transform: translateY(-3px); /* Slight lift effect */
+  }
+  .shop-cta img {
+    max-width: 100px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .shop-cta h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  /* --- End Shop CTA --- */
+
+  /* --- User/Guest Info Boxes (if still used for other messages) --- */
+  .user-info-main, .guest-info-main { /* Renamed to avoid conflict if header has similar */
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  .user-info-main p, .guest-info-main p {
+    margin: 8px 0;
+  }
+
+  /* General Link Styling (for links not otherwise styled) */
+  main.page-content a:not(.button-style):not(.shop-cta a) { /* More specific */
+    color: var(--primary-blue);
+    text-decoration: none;
+  }
+  main.page-content a:not(.button-style):not(.shop-cta a):hover {
+    color: var(--primary-blue-darker);
+    text-decoration: underline;
+  }
+
+  /* Button styles for general use if needed, e.g., for form submissions not in header */
+  .button-primary {
+    display: inline-block;
+    background-color: var(--primary-blue);
+    color: var(--text-light);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  .button-primary:hover {
+    background-color: var(--primary-blue-darker);
+    color: var(--text-light);
+  }
+
+  /* Messages and Errors */
+  .messages, .form-errors {
+    list-style: none;
+    padding: 10px 15px;
+    margin: 20px 0; /* Added top margin */
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid;
+  }
+  .messages li, .form-errors li {
+    padding: 3px 0;
+  }
+  .messages {
+    background-color: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--success-text);
+  }
+  .form-errors {
+    background-color: var(--error-bg);
+    border-color: var(--error-border);
+    color: var(--error-text);
+  }
+  /* --- End Messages and Errors --- */
+
+  /* --- Footer Styling --- */
+  footer.page-footer {
+    width: 100%;
+    background-color: #343a40; /* Dark footer */
+    color: var(--text-light);
+    padding: 20px 0;
+    margin-top: auto; /* Pushes footer down in flex container */
+    text-align: center;
+    border-radius: 5px 5px 0 0; /* Rounded top corners */
   }
   footer.page-footer ul {
     list-style: none;
@@ -57,111 +258,24 @@
   }
   footer.page-footer ul li {
     display: inline;
-    margin-right: 15px;
-  }
-  footer.page-footer ul li:last-child {
-    margin-right: 0;
+    margin: 0 10px;
   }
   footer.page-footer ul li a {
-    color: #ffffff;
+    color: var(--text-light);
     text-decoration: none;
-    padding: 8px 15px;
+    padding: 8px 10px;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
   }
   footer.page-footer ul li a:hover {
-    background-color: #007bff; /* Blue for hover */
-    color: #ffffff;
-    text-decoration: none;
+    background-color: var(--primary-blue);
   }
   footer.page-footer p {
-    margin: 5px 0 0 0; /* Adjusted margin for footer paragraphs */
+    margin: 5px 0 0 0;
     font-size: 0.9rem;
   }
+  /* --- End Footer Styling --- */
 
-  /* Navigation Bar */
-  nav.main-nav {
-    background-color: #343a40;
-    padding: 10px 0;
-    border-radius: 5px;
-  }
-  nav.main-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: center;
-  }
-  nav.main-nav ul li {
-    display: inline;
-    margin-right: 15px;
-  }
-  nav.main-nav ul li:last-child {
-    margin-right: 0;
-  }
-  nav.main-nav ul li a {
-    color: #ffffff;
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-  nav.main-nav ul li a:hover,
-  nav.main-nav ul li a.active {
-    background-color: #007bff;
-    color: #ffffff;
-  }
-
-  /* User/Guest specific sections */
-  .user-info, .guest-info {
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    background-color: #e9ecef;
-  }
-  .user-info p, .guest-info p {
-    margin: 8px 0;
-  }
-  a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-    color: #0056b3;
-  }
-  button[type="submit"] {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.95rem;
-  }
-  button[type="submit"]:hover {
-    background-color: #c82333;
-  }
-  /* Messages and Errors */
-  .messages, .form-errors {
-    list-style: none;
-    padding: 10px 15px;
-    margin: 0 0 20px 0;
-    border-radius: 5px;
-  }
-  .messages li, .form-errors li {
-    padding: 3px 0;
-  }
-  .messages {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-  }
-  .form-errors {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-  }
 </style>
 {% endblock %}
 
@@ -169,13 +283,33 @@
 <div class="container">
 
   <header class="page-header">
-    {# Main Navigation - Common for all users #}
+    <div class="logo-container">
+      <a href="{% url 'home' %}"> 
+        <img src="{% static 'images/logo.png' %}" alt="BECOM Logo"> {# Your logo #}
+      </a>
+    </div>
+
+    {# Main navigation - kept separate for clarity, now minimal #}
     <nav class="main-nav">
       <ul>
-        <li><a href="{% url 'cart:product_list' %}" title="Browse Shop">Shop</a></li>
         <li><a href="{% url 'cart:view_cart' %}">View Cart</a></li>
       </ul>
     </nav>
+
+    <div class="header-user-actions">
+      {% if user.is_authenticated %}
+        <p class="user-greeting">Hi <strong>{{ user.username }}</strong>!</p>
+        <a href="{% url 'password_change' %}">Password Change</a>
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit">Log Out</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Log In</a>
+        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'password_reset' %}">Password Reset</a>
+      {% endif %}
+    </div>
   </header>
 
   <main class="page-content">
@@ -188,7 +322,7 @@
     </ul>
     {% endif %}
 
-    {# Form Errors - Assuming 'form' object is passed in context for pages with forms #}
+    {# Form Errors #}
     {% if form.errors %}
     <ul class="form-errors">
       {% for field, errors in form.errors.items %}
@@ -203,24 +337,26 @@
     </ul>
     {% endif %}
 
-    {# Content based on authentication status #}
-    {% if user.is_authenticated %}
-    <div class="user-info">
-      <p>Hi <strong>{{ user.username }}</strong>!</p>
-      <p><a href="{% url 'password_change' %}">Password Change</a></p>
-      <form action="{% url 'logout' %}" method="post" style="display: inline;">
-        {% csrf_token %}
-        <button type="submit">Log Out</button>
-      </form>
+    {# Shop Call to Action Section #}
+    <section class="shop-cta">
+      <a href="{% url 'cart:product_list' %}" title="Browse Shop">
+        <img src="{% static 'images/shopping_cart.png' %}" alt="Shopping Cart icon leading to shop">
+        <h2>Browse Our Shop</h2>
+      </a>
+    </section>
+
+    {# Optional: Placeholder for any other main content or user-specific info not in header #}
+    {# For example, if 'Password Change' was too much for the header, its form could be here #}
+    {# {% if user.is_authenticated %}
+    <div class="user-info-main">
+      <p>Welcome back! Manage your account settings here.</p>
     </div>
     {% else %}
-    <div class="guest-info">
-      <p>You are not logged in.</p>
-      <p><a href="{% url 'login' %}">Log In</a></p>
-      <p><a href="{% url 'register' %}">Register</a></p>
-      <p><a href="{% url 'password_reset' %}">Password Reset</a></p>
+    <div class="guest-info-main">
+      <p>Explore our site and create an account to get started!</p>
     </div>
-    {% endif %}
+    {% endif %} #}
+
   </main>
 
   <footer class="page-footer">
@@ -228,8 +364,8 @@
       <li><a href="{% url 'about' %}" title="About Us">About</a></li>
       <li><a href="{% url 'contact' %}" title="Contact Us">Contact</a></li>
     </ul>
-    <p><em>Welcome to BEcom! Browse around using the navigation above.</em></p>
-    <p>&copy; {% now "Y" %} BEcom. All rights reserved.</p>
+    <p><em>Welcome to our site! Browse around using the navigation above.</em></p>
+    <p>&copy; {% now "Y" %} Your Site Name. All rights reserved.</p>
   </footer>
 
 </div>
