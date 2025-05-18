@@ -13,7 +13,7 @@
 <h2>{{ product.name }}</h2>
 <p>{{ product.description }}</p>
 <p>Price: ${{ product.price }}</p>
-<a href="{% url 'shopping_cart:add_to_cart' product.id %}">Add to Cart</a>
+<a href="{% url 'cart:add_to_cart' product.id %}">Add to Cart</a>
 </li>
 {% endfor %}
 </ul>

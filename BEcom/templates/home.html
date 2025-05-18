@@ -116,8 +116,8 @@
   <nav class="main-nav">
     <ul>
       {# Add 'active' class dynamically if you have a way to detect current page, e.g. based on request.resolver_match.url_name #}
-      <li><a href="{% url 'home' %}" title="Go to Home">Home</a></li> {# Assuming 'home' is your homepage URL name #}
-      <li><a href="{% url 'shop' %}" title="Browse Shop">Shop</a></li> {# New Shop link #}
+      <li><a href="{% url 'home' %}" title="Go to Home">Home</a></li> 
+      <li><a href="{% url 'cart:product_list' %}" title="Browse Shop">Shop</a></li>
       <li><a href="{% url 'cart:view_cart' %}">View Cart</a></li> 
       <li><a href="{% url 'about' %}" title="About Us">About</a></li>
       <li><a href="{% url 'contact' %}" title="Contact Us">Contact</a></li>
