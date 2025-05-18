@@ -5,28 +5,84 @@
 {% block head %}
 {{ block.super }} {# Includes head content from base.html #}
 <style>
+  html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.6;
-    margin: 0;
-    padding: 0;
+    margin: 0; /* Reset default margin */
+    padding: 0; /* Reset default padding */
     background-color: #f8f9fa; /* Light grey background */
     color: #212529; /* Dark text color */
+    display: flex; /* Use flexbox for body */
+    flex-direction: column; /* Stack children vertically */
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
   }
   .container {
     width: 90%;
     max-width: 960px; /* Max width for larger screens */
-    margin: 20px auto;
+    margin: 20px auto; /* Top/bottom margins + auto for horizontal centering */
     padding: 20px;
     background-color: #ffffff; /* White content background */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows container to grow and fill available space in body */
   }
+  header.page-header {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  main.page-content {
+    flex-grow: 1; /* Allows main content to expand and push footer down within container */
+    width: 100%;
+  }
+  footer.page-footer {
+    width: 100%; /* Ensure footer spans the width of its parent (.container) */
+    background-color: #343a40; /* Dark background for footer */
+    color: #ffffff;
+    padding: 20px 0; /* Padding inside the footer */
+    margin-top: 30px; /* Space above the footer, ensuring it's distinct */
+    text-align: center;
+    border-radius: 5px; /* Match other container elements */
+  }
+  footer.page-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+  }
+  footer.page-footer ul li {
+    display: inline;
+    margin-right: 15px;
+  }
+  footer.page-footer ul li:last-child {
+    margin-right: 0;
+  }
+  footer.page-footer ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  footer.page-footer ul li a:hover {
+    background-color: #007bff; /* Blue for hover */
+    color: #ffffff;
+    text-decoration: none;
+  }
+  footer.page-footer p {
+    margin: 5px 0 0 0; /* Adjusted margin for footer paragraphs */
+    font-size: 0.9rem;
+  }
+
   /* Navigation Bar */
   nav.main-nav {
-    background-color: #343a40; /* Dark background for nav */
+    background-color: #343a40;
     padding: 10px 0;
-    margin-bottom: 20px;
     border-radius: 5px;
   }
   nav.main-nav ul {
@@ -50,8 +106,8 @@
     transition: background-color 0.3s ease;
   }
   nav.main-nav ul li a:hover,
-  nav.main-nav ul li a.active { /* Style for active link */
-    background-color: #007bff; /* Blue for hover/active */
+  nav.main-nav ul li a.active {
+    background-color: #007bff;
     color: #ffffff;
   }
 
@@ -59,23 +115,23 @@
   .user-info, .guest-info {
     padding: 15px;
     margin-bottom: 20px;
-    border: 1px solid #dee2e6; /* Light border */
+    border: 1px solid #dee2e6;
     border-radius: 5px;
-    background-color: #e9ecef; /* Slightly off-white background */
+    background-color: #e9ecef;
   }
   .user-info p, .guest-info p {
     margin: 8px 0;
   }
   a {
-    color: #007bff; /* Standard blue for links */
+    color: #007bff;
     text-decoration: none;
   }
   a:hover {
     text-decoration: underline;
-    color: #0056b3; /* Darker blue on hover */
+    color: #0056b3;
   }
   button[type="submit"] {
-    background-color: #dc3545; /* Red for logout/action */
+    background-color: #dc3545;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -84,25 +140,25 @@
     font-size: 0.95rem;
   }
   button[type="submit"]:hover {
-    background-color: #c82333; /* Darker red on hover */
+    background-color: #c82333;
   }
   /* Messages and Errors */
   .messages, .form-errors {
     list-style: none;
     padding: 10px 15px;
-    margin: 0 0 20px 0; /* Standardized margin */
+    margin: 0 0 20px 0;
     border-radius: 5px;
   }
   .messages li, .form-errors li {
     padding: 3px 0;
   }
-  .messages { /* Django messages styling */
-    background-color: #d4edda; /* Green for success/info */
+  .messages {
+    background-color: #d4edda;
     border: 1px solid #c3e6cb;
     color: #155724;
   }
-  .form-errors { /* Form errors styling */
-    background-color: #f8d7da; /* Red for errors */
+  .form-errors {
+    background-color: #f8d7da;
     border: 1px solid #f5c6cb;
     color: #721c24;
   }
@@ -112,66 +168,69 @@
 {% block content %}
 <div class="container">
 
-  {# Main Navigation - Common for all users #}
-  <nav class="main-nav">
+  <header class="page-header">
+    {# Main Navigation - Common for all users #}
+    <nav class="main-nav">
+      <ul>
+        <li><a href="{% url 'cart:product_list' %}" title="Browse Shop">Shop</a></li>
+        <li><a href="{% url 'cart:view_cart' %}">View Cart</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-content">
+    {# Django Messages #}
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {# Form Errors - Assuming 'form' object is passed in context for pages with forms #}
+    {% if form.errors %}
+    <ul class="form-errors">
+      {% for field, errors in form.errors.items %}
+      <li>
+          {% if field != '__all__' %}{{ field|capfirst }}: {% endif %}
+          {{ errors|join:", " }}
+      </li>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <li>{{ form.non_field_errors|join:", " }}</li>
+      {% endif %}
+    </ul>
+    {% endif %}
+
+    {# Content based on authentication status #}
+    {% if user.is_authenticated %}
+    <div class="user-info">
+      <p>Hi <strong>{{ user.username }}</strong>!</p>
+      <p><a href="{% url 'password_change' %}">Password Change</a></p>
+      <form action="{% url 'logout' %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit">Log Out</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="guest-info">
+      <p>You are not logged in.</p>
+      <p><a href="{% url 'login' %}">Log In</a></p>
+      <p><a href="{% url 'register' %}">Register</a></p>
+      <p><a href="{% url 'password_reset' %}">Password Reset</a></p>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer class="page-footer">
     <ul>
-      {# Add 'active' class dynamically if you have a way to detect current page, e.g. based on request.resolver_match.url_name #}
-      <li><a href="{% url 'home' %}" title="Go to Home">Home</a></li> 
-      <li><a href="{% url 'cart:product_list' %}" title="Browse Shop">Shop</a></li>
-      <li><a href="{% url 'cart:view_cart' %}">View Cart</a></li> 
       <li><a href="{% url 'about' %}" title="About Us">About</a></li>
       <li><a href="{% url 'contact' %}" title="Contact Us">Contact</a></li>
     </ul>
-  </nav>
-
-  {# Django Messages #}
-  {% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-
-  {# Form Errors - Assuming 'form' object is passed in context for pages with forms #}
-  {% if form.errors %}
-  <ul class="form-errors">
-    {% for field, errors in form.errors.items %}
-    <li>
-        {% if field != '__all__' %}{{ field|capfirst }}: {% endif %}
-        {{ errors|join:", " }}
-    </li>
-    {% endfor %}
-    {% if form.non_field_errors %} {# Handle non-field errors separately #}
-        <li>{{ form.non_field_errors|join:", " }}</li>
-    {% endif %}
-  </ul>
-  {% endif %}
-
-  {# Content based on authentication status #}
-  {% if user.is_authenticated %}
-  <div class="user-info">
-    <p>Hi <strong>{{ user.username }}</strong>!</p>
-    <p><a href="{% url 'password_change' %}">Password Change</a></p>
-    {# Logout Form #}
-    <form action="{% url 'logout' %}" method="post" style="display: inline;">
-      {% csrf_token %}
-      <button type="submit">Log Out</button>
-    </form>
-  </div>
-  {% else %}
-  <div class="guest-info">
-    <p>You are not logged in.</p>
-    <p><a href="{% url 'login' %}">Log In</a></p>
-    <p><a href="{% url 'register' %}">Register</a></p>
-    <p><a href="{% url 'password_reset' %}">Password Reset</a></p>
-  </div>
-  {% endif %}
-
-  {# You can add more page-specific content here #}
-  <div style="padding-top: 20px; text-align: center;">
-      <p><em>Welcome to our site! Browse around using the navigation above.</em></p>
-  </div>
+    <p><em>Welcome to BEcom! Browse around using the navigation above.</em></p>
+    <p>&copy; {% now "Y" %} BEcom. All rights reserved.</p>
+  </footer>
 
 </div>
 {% endblock %}

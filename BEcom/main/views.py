@@ -36,6 +36,4 @@ def register(request):
 
 
 
-# Shopping Cart and Products
-def shop(request):
-    return render(request, 'shop.html')
+
