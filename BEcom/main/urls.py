@@ -17,4 +17,5 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('register/', views.register, name='register'),
     path('cart/', include('cart.urls', namespace='cart')),
+    path('checkout/', include('payments.urls', namespace='payments')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
