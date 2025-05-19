@@ -3,3 +3,4 @@ BEcom\databases\db.sqlite3
 BEcom\databases\migrations
 BEcom\media
 BEcom\settings.py
+BEcom/BEcom/settings.py
