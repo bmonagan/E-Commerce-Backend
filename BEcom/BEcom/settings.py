@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'accounts',
     'cart',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # Media files (uploaded user files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
+
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51RQKeLHKofSLLgTS7wugWwhBRzmuNAoITI8dKX0RjgRX3yJTcUTIZm5FBSzlzTyWKp4JR2JFcqWJxGJy0oUbwbYq00dsyY7h3w'
+STRIPE_SECRET_KEY = 'sk_test_51RQKeLHKofSLLgTSUW80YzC7BS0hQTJ1eKrTk2YDYx8Pf64m2o5ziB1oIg0Mq8QtBws4xVrwCQ0dz5zhIPIPnMkQ0096KXL1xc'
