@@ -10,6 +10,7 @@ import stripe
 from stripe import StripeError
 
 
+
 from cart.models import CartItem 
 
 def SuccessView(request):
@@ -38,7 +39,7 @@ def checkout(request):
             if not all([item.product, item.product.name, item.product.price is not None]):
                 messages.error(request, f"Missing details for a product in your cart. Please review your cart.")
                 #log the problematic item for debugging
-                print(f"Problematic cart item ID: {item.id}")
+                print(f"Problematic cart item ID: {item.product}")
                 return redirect(reverse('cart:view_cart')) # Or your cart view's URL name
 
             line_items.append({
@@ -167,11 +168,6 @@ def stripe_webhook(request):
     except ValueError as e:
         # Invalid payload
         print(f"Webhook ValueError: {e}")
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        print(f"Webhook SignatureVerificationError: {e}")
-        return HttpResponse(status=400)
     except Exception as e:
         print(f"Webhook generic error: {e}")
         return HttpResponse(status=400)
