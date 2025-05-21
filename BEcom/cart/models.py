@@ -7,8 +7,6 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='products/')
 
-def __str__(self):
-    return self.name
 
 class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -16,7 +14,7 @@ class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
 
-def __str__(self):
-    return f'{self.quantity} x {self.product.name}'
+    def __str__(self):
+        return f'{self.quantity} x {self.product.name}'
 
-# Create your models here.
+
