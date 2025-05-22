@@ -1,12 +1,9 @@
-<!-- cart/cart.html -->
-
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
+    <title>Your Shopping Cart</title> <style>
         /* Add CSS styles for flex container and items */
         .product-list {
             display: flex;
@@ -17,9 +14,8 @@
         }
 
         .product-item {
-            
             flex: 1; /* Grow to fill available space evenly */
-             /* Limit item width to avoid overcrowding */
+            /* Limit item width to avoid overcrowding */
             margin: 5px; /* Add spacing between items */
             border: 1px solid #ccc; /* Add a border for visual separation */
             padding: 10px;
@@ -27,14 +23,51 @@
         }
 
         /* Style the "Buy Now" button */
-        .checkout_buttons {
+        .checkout_buttons { /* Consider renaming to .action-button or similar for clarity */
             display: inline-block;
             margin-top: 10px;
+            margin-right: 5px; /* Added some spacing between buttons */
             background-color: #007bff;
             color: #fff;
             text-decoration: none;
             padding: 5px 10px;
             border-radius: 5px;
+        }
+
+        /* Basic CSS for a pop-up message (you can customize this heavily) */
+        .django-message-popup {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-family: sans-serif;
+            z-index: 10000; /* Ensure it's on top */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            opacity: 0; /* Start hidden for fade-in effect */
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .django-message-popup.error {
+            background-color: #dc3545; /* Red for errors */
+        }
+
+        .django-message-popup.success {
+            background-color: #28a745; /* Green for success */
+        }
+
+        .django-message-popup.info {
+            background-color: #17a2b8; /* Blue for info */
+        }
+
+        .django-message-popup.warning {
+            background-color: #ffc107; /* Yellow for warning */
+            color: #333; /* Darker text for yellow background */
+        }
+        .django-message-popup.show {
+            opacity: 1;
         }
     </style>
 </head>
@@ -44,19 +77,15 @@
     <h1>Your Shopping Cart</h1>
 
     <div class="product-list">
-
-   
-
-    {% for item in cart_items %}
-    <div class="product-item">
-        <p>{{ item.product.name }} ({{ item.quantity }})</p>
-        <p>Price: ${{ item.product.price }}</p>
-        <a href="{% url 'cart:remove_from_cart' item.id %}">Remove</a>
-    </div>
-    {% empty %}
-    <p>Your cart is empty.</p>
-    {% endfor %}
-
+        {% for item in cart_items %}
+        <div class="product-item">
+            <p>{{ item.product.name }} ({{ item.quantity }})</p>
+            <p>Price: ${{ item.product.price }}</p>
+            <a href="{% url 'cart:remove_from_cart' item.id %}">Remove</a>
+        </div>
+        {% empty %}
+        <p>Your cart is empty.</p>
+        {% endfor %}
     </div>
 
     <p>Total Price: ${{ total_price }}</p>
@@ -64,8 +93,42 @@
     <a href="{% url 'cart:product_list' %}" class="checkout_buttons">Continue Shopping</a>
     <a href="{% url 'payments:checkout' %}" class="checkout_buttons">Checkout</a>
     <a href="{% url 'cart:clear_cart' %}" class="checkout_buttons">Clear Cart</a>
+
+    {% if messages %}
+    <div id="message-container">
+        {% for message in messages %}
+        <div class="django-message-popup {{ message.tags }}" role="alert">
+            {{ message }}
+            <button type="button" class="close-message" style="margin-left: 15px; background: none; border: none; color: white; font-weight: bold; cursor: pointer;" onclick="this.parentElement.style.display='none';">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagePopups = document.querySelectorAll('.django-message-popup');
+            messagePopups.forEach(function(popup, index) {
+                // Stagger the display slightly if there are multiple messages
+                setTimeout(function() {
+                    popup.classList.add('show'); // Make it visible
+                }, index * 100); // Small delay for each subsequent message
+
+                // Automatically hide after some time (e.g., 5 seconds)
+                // You can make this longer or shorter, or remove auto-hide
+                setTimeout(function() {
+                    popup.classList.remove('show');
+                    // Optional: remove the element from DOM after fade out
+                    setTimeout(() => {
+                        if (popup.parentElement) { // Check if still in DOM
+                           popup.remove();
+                        }
+                    }, 500); // Wait for fade out transition
+                }, 5000 + (index * 100)); // 5 seconds + stagger
+            });
+        });
+    </script>
+    {% endif %}
     <script src="https://js.stripe.com/v3/"></script>
 
 </body>
-
 </html>
