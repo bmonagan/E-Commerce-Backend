@@ -20,15 +20,15 @@
             
             flex: 1; /* Grow to fill available space evenly */
              /* Limit item width to avoid overcrowding */
-            margin: 10px; /* Add spacing between items */
+            margin: 5px; /* Add spacing between items */
             border: 1px solid #ccc; /* Add a border for visual separation */
             padding: 10px;
             text-align: center;
         }
 
         /* Style the "Buy Now" button */
-        .buy-now-button {
-            display: block;
+        .checkout_buttons {
+            display: inline-block;
             margin-top: 10px;
             background-color: #007bff;
             color: #fff;
@@ -61,8 +61,9 @@
 
     <p>Total Price: ${{ total_price }}</p>
 
-    <a href="{% url 'cart:product_list' %}">Continue Shopping</a>
-    <a href="{% url 'payments:checkout' %}" class="buy-now-button">Checkout</a>
+    <a href="{% url 'cart:product_list' %}" class="checkout_buttons">Continue Shopping</a>
+    <a href="{% url 'payments:checkout' %}" class="checkout_buttons">Checkout</a>
+    <a href="{% url 'cart:clear_cart' %}" class="checkout_buttons">Clear Cart</a>
     <script src="https://js.stripe.com/v3/"></script>
 
 </body>

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Product, CartItem
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 def product_list(request):
     products = Product.objects.all()
@@ -44,7 +45,7 @@ def clear_user_cart_session(request):
     if request.user.is_authenticated:
         CartItem.objects.filter(user=request.user).delete()
         print(f"Session cart cleared for user: {request.user.username}")
-        return HttpResponseRedirect('/cart/')
+        return HttpResponseRedirect('/cart/cart')
     else:
         print("User is not authenticated. Cannot clear session cart.")
-        return HttpResponseRedirect('login/')
+        return redirect(f"{reverse('login')}?next={request.path}")
