@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Product, CartItem
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 def product_list(request):
     products = Product.objects.all()
@@ -36,3 +36,15 @@ def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     return render(request, 'cart/checkout.html', {'cart_items': cart_items, 'total_price': total_price})
+
+
+
+
+def clear_user_cart_session(request):
+    if request.user.is_authenticated:
+        CartItem.objects.filter(user=request.user).delete()
+        print(f"Session cart cleared for user: {request.user.username}")
+        return HttpResponseRedirect('/cart/')
+    else:
+        print("User is not authenticated. Cannot clear session cart.")
+        return HttpResponseRedirect('login/')

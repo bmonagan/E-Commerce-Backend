@@ -5,15 +5,22 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.utils.decorators import method_decorator
 
 import stripe
 from stripe import StripeError
+from django.views import View
+from django.views.generic import TemplateView
 
 
 
 from cart.models import CartItem 
+from payments.models import UserPayment
+from cart.views import clear_user_cart_session
 
 def SuccessView(request):
+    clear_user_cart_session(request)
     return render(request, 'payments/success.html')
 def CancelledView(request):
     return render(request, 'payments/cancelled.html')
@@ -149,40 +156,26 @@ def create_checkout_session(request): # This view returns JSON for client-side J
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
+@require_POST
 @csrf_exempt
 def stripe_webhook(request):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    endpoint_secret = settings.STRIPE_ENDPOINT_SECRET 
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
     payload = request.body
-    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE') # Use .get for safety
+    signature_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
-
-    if not endpoint_secret:
-        print("ERROR: Stripe endpoint secret not configured.")
-        return HttpResponse(status=500) # Internal server error if not configured
-
+    
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
+            payload, signature_header, endpoint_secret
         )
-    except ValueError as e:
-        # Invalid payload
-        print(f"Webhook ValueError: {e}")
-    except Exception as e:
-        print(f"Webhook generic error: {e}")
+    except:
         return HttpResponse(status=400)
-
-
-    # Handle the checkout.session.completed event
-    if event and event['type'] == 'checkout.session.completed':
+    
+    if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        user_id = session.get('metadata', {}).get('user_id')
-        print(f"Payment was successful for session: {session.id}, user_id: {user_id}")
-        # TODO:
-        # 1. Verify the payment status again if necessary (session.payment_status == 'paid')
-        # 2. Retrieve the user (if user_id exists)
-        # 3. Mark the order as paid in your database.
-        # 4. Clear the user's cart (CartItem.objects.filter(user_id=user_id).delete())
-        # 5. Send confirmation email, etc.
-
+        checkout_session_id = session.get('id')
+        user_payment = UserPayment.objects.get(stripe_checkout_id=checkout_session_id)
+        user_payment.has_paid = True
+        user_payment.save()
+        
     return HttpResponse(status=200)
