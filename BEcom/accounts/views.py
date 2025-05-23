@@ -6,7 +6,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordResetForm
+from django.contrib import messages
+
 from .forms import CustomUserCreationForm
+from BEcom.tasks import send_welcome_email_task
 
 
 class SignUpView(CreateView):
@@ -43,6 +46,8 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            send_welcome_email_task.delay(user.id) # Pass the new user's ID
+            messages.success(request, 'Registration successful! Please check your email for a welcome message.')
             login(request, user)
             return redirect("home") 
     else:
