@@ -299,7 +299,7 @@
     <div class="header-user-actions">
       {% if user.is_authenticated %}
         <p class="user-greeting">Hi <strong>{{ user.username }}</strong>!</p>
-        <a href="{% url 'password_change' %}">Password Change</a>
+        <a href="{% url 'password_reset_form' %}">Password Change</a>
         <form action="{% url 'logout' %}" method="post" style="display: inline;">
           {% csrf_token %}
           <button type="submit">Log Out</button>
