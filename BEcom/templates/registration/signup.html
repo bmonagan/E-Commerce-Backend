@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% comment %}
+  Django Sign Up Form - Blue Themed
+  This template uses {{ form.as_p }} for simplicity.
+  For the input fields (username, email, password) to be styled by Tailwind CSS,
+  your 'base.html' or global CSS should ideally include the '@tailwindcss/forms' plugin
+  or define global styles for input, select, textarea elements.
+{% endcomment %}
+
+{% block title %}Sign Up{% endblock title %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 class="mt-6 text-center text-4xl font-extrabold text-blue-700">
+            Create Your Account
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            Or <a href="{% url 'login' %}" class="font-medium text-blue-600 hover:text-blue-500">
+                sign in to your existing account
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                {% comment %}
+                  {{ form.as_p }} will render each form field (label, input, errors, help text)
+                  wrapped in <p> tags. Errors will be displayed above their respective fields
+                  if they occur.
+                {% endcomment %}
+                {{ form.as_p }}
+
+                <div>
+                    <button
+                        type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+                    >
+                        Register
+                    </button>
+                </div>
+            </form>
+
+            {% comment %}
+              If you want to display non-field errors (errors that don't belong to a specific field,
+              often raised during form.clean()), you can add this:
+              {% if form.non_field_errors %}
+                <div class="mt-4 bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul role="list" class="list-disc pl-5 space-y-1">
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              {% endif %}
+            {% endcomment %}
+
+        </div>
+    </div>
+</div>
+{% endblock content%}
