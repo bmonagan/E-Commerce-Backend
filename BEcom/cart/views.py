@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Product, CartItem
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.contrib import messages
 
 def product_list(request):
     products = Product.objects.all()
@@ -9,12 +10,16 @@ def product_list(request):
 
 def view_cart(request):
     if not request.user.is_authenticated:
-        return render(request, 'cart/cart.html', {'cart_items': [], 'total_price': 0})
+        messages.error(request, 'You need to be logged in to view your cart.')
+        return redirect(f"{reverse('login')}?next={request.path}")
     cart_items = CartItem.objects.filter(user=request.user)
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     return render(request, 'cart/cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 def add_to_cart(request, product_id):
+    if not request.user.is_authenticated:
+        messages.error(request, "You must be logged in to add items to your cart.")
+        return redirect(f"{reverse('login')}?next={request.path}")
     product = Product.objects.get(id=product_id)
     cart_item, created = CartItem.objects.get_or_create(product=product, 
                                                        user=request.user)
@@ -33,7 +38,8 @@ def home(request):
 
 def checkout(request):
     if not request.user.is_authenticated:
-        return redirect('cart:view_cart')
+        messages.error(request, 'You need to be logged in to checkout.')
+        return redirect(f"{reverse('login')}?next={request.path}")
     cart_items = CartItem.objects.filter(user=request.user)
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     return render(request, 'cart/checkout.html', {'cart_items': cart_items, 'total_price': total_price})
@@ -47,5 +53,5 @@ def clear_user_cart_session(request):
         print(f"Session cart cleared for user: {request.user.username}")
         return HttpResponseRedirect('/cart/cart')
     else:
-        print("User is not authenticated. Cannot clear session cart.")
+        messages.error(request, 'You need to be logged in to clear your cart.')
         return redirect(f"{reverse('login')}?next={request.path}")

@@ -47,8 +47,8 @@ def checkout(request):
                 messages.error(request, f"Missing details for a product in your cart. Please review your cart.")
                 #log the problematic item for debugging
                 print(f"Problematic cart item ID: {item.product}")
-                return redirect(reverse('cart:view_cart')) # Or your cart view's URL name
-
+                return redirect(reverse('cart:view_cart')) 
+            
             line_items.append({
                 'price_data': {
                     'currency': 'usd',
