@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+
 app_name = 'payments'
 
 urlpatterns = [
@@ -8,5 +9,5 @@ urlpatterns = [
     path('create-checkout-session/', views.create_checkout_session, name='create_checkout_session'),
     path('success/', views.SuccessView, name='success'),
     path('cancelled/', views.CancelledView, name='cancelled'),
-    path('webhook/', views.stripe_webhook)
+    path('webhook/', views.stripe_webhook),
 ]

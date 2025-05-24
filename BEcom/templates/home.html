@@ -299,6 +299,7 @@
     <div class="header-user-actions">
       {% if user.is_authenticated %}
         <p class="user-greeting">Hi <strong>{{ user.username }}</strong>!</p>
+        <a href="{% url 'accounts:profile' %}">View Profile</a>
         <a href="{% url 'password_reset' %}">Password Change</a>
         <form action="{% url 'logout' %}" method="post" style="display: inline;">
           {% csrf_token %}
@@ -306,7 +307,7 @@
         </form>
       {% else %}
         <a href="{% url 'login' %}">Log In</a>
-        <a href="{% url 'signup' %}">Register</a>
+        <a href="{% url 'accounts:signup' %}">Register</a>
         <a href="{% url 'password_reset' %}">Password Reset</a>
       {% endif %}
     </div>

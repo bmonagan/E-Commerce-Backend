@@ -3,7 +3,10 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import views as auth_views
 
+
 from .views import SignUpView
+from . import views
+app_name = "accounts"
 
 
 urlpatterns = [
@@ -15,4 +18,8 @@ urlpatterns = [
     path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path("reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
     path("register/", SignUpView.as_view(), name="register"),
+    path("profile/", views.profile, name="profile"),
+    path("profile/edit/", views.profile_edit, name="profile_edit"),
+    path("accounts_settings/", views.account_settings, name="account_settings"),
+    path("delete_account/", views.delete_account, name="delete_account"),
 ]

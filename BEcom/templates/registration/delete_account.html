@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 40px auto; padding: 2em; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+    <h2>Delete Account</h2>
+    <p>This is a placeholder page for account deletion.</p>
+    <p>Here you will be able to permanently delete your account and all associated data.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete My Account</button>
+    </form>
+    <a href="{% url 'accounts:profile' %}" class="btn btn-secondary" style="margin-top: 1em;">Cancel</a>
+</div>
+{% endblock %}

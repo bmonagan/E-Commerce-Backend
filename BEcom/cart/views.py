@@ -55,3 +55,13 @@ def clear_user_cart_session(request):
     else:
         messages.error(request, 'You need to be logged in to clear your cart.')
         return redirect(f"{reverse('login')}?next={request.path}")
+
+
+def order_history(request):
+    pass
+    # if not request.user.is_authenticated:
+    #     messages.error(request, 'You need to be logged in to view your order history.')
+    #     return redirect(f"{reverse('login')}?next={request.path}")
+    
+    # orders = request.user.orders.all()  
+    # return render(request, 'cart/order_history.html', {'orders': orders})
