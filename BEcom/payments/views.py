@@ -15,7 +15,7 @@ from django.views.generic import TemplateView
 
 
 
-from cart.models import CartItem 
+from cart.models import CartItem, Order, OrderItem
 from payments.models import UserPayment
 from cart.views import clear_user_cart_session
 
@@ -106,6 +106,24 @@ def checkout(request):
         return redirect(reverse('cart:view_cart')) 
 
 
+def create_order_for_user(user):
+    cart_items = CartItem.objects.filter(user=user)
+    order = Order.objects.create(
+        user=user,
+        total=sum(item.product.price * item.quantity for item in cart_items),
+        status='paid'
+    )
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            product=item.product,
+            quantity=item.quantity,
+            price=item.product.price
+        )
+    cart_items.delete()  # Clear cart after order
+    return order
+
+
 @csrf_exempt
 def stripe_config(request):
     if request.method == 'GET':
@@ -173,9 +191,15 @@ def stripe_webhook(request):
     
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        checkout_session_id = session.get('id')
-        user_payment = UserPayment.objects.get(stripe_checkout_id=checkout_session_id)
-        user_payment.has_paid = True
-        user_payment.save()
-        
+        user_id = session['metadata'].get('user_id')
+        # Only create the order if user_id is present
+        if user_id:
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            try:
+                user = User.objects.get(id=user_id)
+                create_order_for_user(user)  
+            except User.DoesNotExist:
+                pass  # Optionally log this
+    
     return HttpResponse(status=200)

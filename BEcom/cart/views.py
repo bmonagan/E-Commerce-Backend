@@ -3,7 +3,9 @@ from .models import Product, CartItem
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
+from .models import Order
 def product_list(request):
     products = Product.objects.all()
     return render(request, 'cart/product_list.html', {'products': products})
@@ -57,11 +59,9 @@ def clear_user_cart_session(request):
         return redirect(f"{reverse('login')}?next={request.path}")
 
 
+@login_required
 def order_history(request):
-    pass
-    # if not request.user.is_authenticated:
-    #     messages.error(request, 'You need to be logged in to view your order history.')
-    #     return redirect(f"{reverse('login')}?next={request.path}")
-    
-    # orders = request.user.orders.all()  
-    # return render(request, 'cart/order_history.html', {'orders': orders})
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'cart/order_history.html', {'orders': orders})
+
+

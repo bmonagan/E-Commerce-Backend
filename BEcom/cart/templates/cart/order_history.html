@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 40px auto;">
+    <h2 style="margin-bottom: 1em;">Your Order History</h2>
+    {% if orders %}
+        {% for order in orders %}
+            <div style="border: 1px solid #ccc; border-radius: 8px; margin-bottom: 2em; padding: 1em; background: #fafafa;">
+                <div style="margin-bottom: 0.5em;">
+                    <strong>Order #{{ order.id }}</strong>
+                    <span style="margin-left: 1em; color: #888;">{{ order.created_at|date:"Y-m-d H:i" }}</span>
+                    <span style="margin-left: 1em; font-weight: bold;">Status: {{ order.status|capfirst }}</span>
+                </div>
+                <div>
+                    <strong>Total:</strong> ${{ order.total }}
+                </div>
+                <ul style="margin-top: 1em;">
+                    {% for item in order.items.all %}
+                        <li>
+                            <span style="font-weight: bold;">{{ item.product.name }}</span>
+                            ({{ item.quantity }}) - ${{ item.price }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have no orders yet.</p>
+    {% endif %}
+    <a href="{% url 'cart:product_list' %}" class="checkout_buttons">Continue Shopping</a>
+</div>
+{% endblock %}
